@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo Generator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(to bottom right, #3498db, #2ecc71);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+        }
+
+        #logo-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #logo {
+            width: 250px;
+            height: 250px;
+            background-color: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        #logo img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        select, input, button {
+            margin: 10px;
+            padding: 8px;
+        }
+
+        select, input {
+            width: 150px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #output {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #output img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        #deleteLogo {
+            background-color: #ff0000;
+        }
+
+        #deleteColor {
+            background-color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div id="logo-container">
+        <h1>Logo Generator</h1>
+
+        <label for="upload">Upload Image:</label>
+        <input type="file" id="upload" accept="image/*">
+
+        <div id="logo"><img id="uploadedImage" alt="your img"></div>
+
+        <label for="shape">Select Shape:</label>
+        <select id="shape" onchange="generateLogo()">
+            <option value="circle">Circle</option>
+            <option value="square">Square</option>
+        </select>
+
+        <label for="color">Select Color:</label>
+        <input type="color" id="color" onchange="generateLogo()" value="#3498db">
+        <button id="deleteColor" onclick="deleteColor()">Delete Color</button>
+
+        <button onclick="saveLogo()">Save Logo</button>
+        <button id="deleteLogo" onclick="deleteLogo()">Delete Logo</button>
+    </div>
+
+    <script>
+        document.getElementById('upload').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const imageUrl = e.target.result;
+
+                    const uploadedImage = document.getElementById('uploadedImage');
+                    uploadedImage.src = imageUrl;
+
+                    // Reset the input field
+                    document.getElementById('upload').value = '';
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function generateLogo() {
+            const shapeSelect = document.getElementById('shape');
+            const colorInput = document.getElementById('color');
+            const logoElement = document.getElementById('logo');
+
+            const uploadedImage = document.getElementById('uploadedImage');
+            const selectedShape = shapeSelect.value;
+            const selectedColor = colorInput.value;
+
+            logoElement.style.borderRadius = selectedShape === 'circle' ? '50%' : '0';
+            logoElement.style.backgroundColor = selectedColor;
+
+            // Apply the uploaded image to the logo
+            logoElement.innerHTML = `<img src="${uploadedImage.src}" alt="Generated Logo">`;
+        }
+
+        function saveLogo() {
+            const logoContainer = document.getElementById('logo-container');
+            const logoImage = document.getElementById('logo').innerHTML;
+
+            // You can implement your save logic here, for example, creating a downloadable link
+            const downloadLink = document.createElement('a');
+            downloadLink.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(logoImage);
+            downloadLink.download = 'logo.html';
+            downloadLink.click();
+        }
+
+        function deleteLogo() {
+            const logoElement = document.getElementById('logo');
+            const uploadedImage = document.getElementById('uploadedImage');
+
+            // Reset the logo and uploaded image
+            logoElement.innerHTML = `<img id="uploadedImage" alt="your img">`;
+            uploadedImage.src = '';
+
+            // Optionally, you can reset other inputs or perform additional actions.
+        }
+
+        function deleteColor() {
+            const colorInput = document.getElementById('color');
+            colorInput.value = '#3498db'; // Set default color or any other desired color
+            generateLogo(); // Call generateLogo to apply the default color to the logo
+        }
+    </script>
+</body>
+</html>
